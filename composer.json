@@ -1,7 +1,7 @@
 {
-    "name": "t3ran13/cron-manager",
-    "description": "PHP cron manager",
-    "keywords": ["php", "cron"],
+    "name": "t3ran13/php-process-manager",
+    "description": "PHP process manager",
+    "keywords": ["php", "process", "process-manager"],
     "license": "MIT",
     "authors": [
         {
