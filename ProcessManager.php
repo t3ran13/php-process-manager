@@ -99,7 +99,7 @@ class ProcessManager extends ProcessParent
                         $msg = '"' . $e->getMessage() . '" ' . PHP_EOL . $e->getTraceAsString();
                         echo PHP_EOL . date('Y-m-d H:i:s') . ' process \'' . $process->getProcessName() . '\' got exception:'
                             . PHP_EOL . $msg;
-                        $process->errorInsertToLog(date('Y-m-d H:i:s') . '   ' . $msg)
+                        $process->addErrorToList(date('Y-m-d H:i:s') . '   ' . $msg)
                             ->saveState();
                     }
                 }
