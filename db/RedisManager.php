@@ -68,7 +68,13 @@ class RedisManager implements DBManagerInterface
         $set = [];
 
         foreach ($fields as $key => $val) {
-            $set["{$this->keyPrefix}:{$id}:{$key}"] = $val;
+            if (is_array($val)) {
+                foreach ($val as $key2 => $val2) {
+                    $set["{$this->keyPrefix}:{$id}:{$key}:{$key2}"] = $val2;
+                }
+            } else {
+                $set["{$this->keyPrefix}:{$id}:{$key}"] = $val;
+            }
         }
 
         /** @var Status $status */
