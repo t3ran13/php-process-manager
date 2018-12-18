@@ -33,7 +33,6 @@ class ProcessRoulette implements ProcessRouletteInterface, \Iterator
             $this->position = 0;
         }
         --$this->arrayCounter;
-        echo PHP_EOL . print_r(__METHOD__ . $this->position, true);
     }
 
     public function valid() {

@@ -31,6 +31,13 @@ interface ProcessInterface
     public function hasState(): bool;
 
     /**
+     * checking existence of process state in db
+     *
+     * @return bool
+     */
+    public function saveState(): bool;
+
+    /**
      * @param DBManagerInterface|null $dbManager
      *
      * @return $this
@@ -195,7 +202,7 @@ interface ProcessInterface
     public function setMaxLifetimeWithoutResults(int $seconds);
 
     /**
-     * @return null|string
+     * @return string
      */
     public function getLastUpdateDatetime();
 

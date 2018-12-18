@@ -14,11 +14,11 @@ interface DBManagerInterface
      * update process state
      *
      * @param int   $id
-     * @param array $options
+     * @param array $fields
      *
      * @return mixed
      */
-    public function updProcessStateById($id, $options);
+    public function updProcessStateById($id, $fields);
 
     /**
      * get all process state by id, or some field

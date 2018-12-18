@@ -4,6 +4,8 @@
 namespace ProcessManager\db;
 
 
+use Predis\Response\Status;
+
 class RedisManager implements DBManagerInterface
 {
     /** @var string Prefix for Redis DB */
@@ -57,19 +59,22 @@ class RedisManager implements DBManagerInterface
      * update process state
      *
      * @param int   $id
-     * @param array $options
+     * @param array $fields
      *
      * @return mixed
      */
-    public function updProcessStateById($id, $options)
+    public function updProcessStateById($id, $fields)
     {
         $set = [];
 
-        foreach ($options as $key => $val) {
-            $set["{$this->keyPrefix}:processes:{$id}:{$key}"] = $val;
+        foreach ($fields as $key => $val) {
+            $set["{$this->keyPrefix}:{$id}:{$key}"] = $val;
         }
 
-        return self::$connect->mset($set);
+        /** @var Status $status */
+        $status = self::$connect->mset($set);
+
+        return $status->getPayload() === 'OK';
     }
 
     /**
@@ -83,16 +88,17 @@ class RedisManager implements DBManagerInterface
     public function getProcessStateById($id, $field = null)
     {
         if ($field === null) {
-            $keys = self::$connect->keys("{$this->keyPrefix}:processes:{$id}:*");
-            $values = self::$connect->mGet($keys);
-
             $data = [];
-            foreach ($keys as $n => $keyFull) {
-                $shortKey = str_replace("{$this->keyPrefix}:processes:{$id}:", '', $keyFull);
-                $data = $this->setArrayElementByKey($data, $shortKey, $values[$n]);
+            $keys = self::$connect->keys("{$this->keyPrefix}:{$id}:*");
+            if (!$keys !== []) {
+                $values = self::$connect->mGet($keys);
+                foreach ($keys as $n => $keyFull) {
+                    $shortKey = str_replace("{$this->keyPrefix}:{$id}:", '', $keyFull);
+                    $data = $this->setArrayElementByKey($data, $shortKey, $values[$n]);
+                }
             }
         } else {
-            $data = self::$connect->get("{$this->keyPrefix}:processes:{$id}:" . $field);
+            $data = self::$connect->get("{$this->keyPrefix}:{$id}:" . $field);
         }
 
         return $data;
@@ -108,9 +114,9 @@ class RedisManager implements DBManagerInterface
      */
     public function addErrorToList($id, string $error)
     {
-        $isUpdated = $this->connect->lPush("{$this->keyPrefix}:processes:{$id}:errors", $error);
+        $isUpdated = $this->connect->lPush("{$this->keyPrefix}:{$id}:errors", $error);
         if ($isUpdated) {
-            $this->connect->lTrim("{$this->keyPrefix}:processes:{$id}:errors", 0, DBManagerInterface::SAVE_LAST_N_ERRORS);
+            $this->connect->lTrim("{$this->keyPrefix}:{$id}:errors", 0, DBManagerInterface::SAVE_LAST_N_ERRORS);
         }
 
         return $isUpdated;

@@ -4,7 +4,7 @@
 namespace ProcessManager\process;
 
 
-abstract class ProcessParentAbstract extends ProcessAbstract
+abstract class ProcessParentAbstract extends ProcessAbstract implements ProcessParentInterface
 {
     /**
      * number of processes are running

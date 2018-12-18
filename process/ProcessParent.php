@@ -98,20 +98,25 @@ abstract class ProcessParent extends ProcessParentAbstract
                 $process->updateResourcesAfterFork();
                 $process->updateProcessPriority();
                 $process->initSignalsHandlers();
-                $process->setPid(getmypid());
-                $process->setRunningFlag(1);
+                $process->setPid(getmypid())
+                    ->setRunningFlag(1)
+                    ->setLastUpdateDatetime(date('Y-m-d H:i:s'))
+                    ->setNTriesOfRun($process->getNTriesOfRun() + 1)
+                    ->saveState();
 
                 $process->start();
 
             } catch (\Throwable $e) {
 
                 $msg = '"' . $e->getMessage() . '" ' . PHP_EOL . $e->getTraceAsString();
-                echo PHP_EOL . date('Y-m-d H:i:s') . ' process \'' . $process->getJobName() . '\' got exception:'
+                echo PHP_EOL . date('Y-m-d H:i:s') . ' process \'' . $process->getProcessName() . '\' got exception:'
                     . PHP_EOL . $msg;
-                $process->errorInsertToLog(date('Y-m-d H:i:s') . '   ' . $msg);
+                $process->errorInsertToLog(date('Y-m-d H:i:s') . '   ' . $msg)
+                    ->saveState();
 
             } finally {
-                $process->setRunningFlag(0);
+                $process->setRunningFlag(0)
+                    ->saveState();
                 exit(1);
             }
         }
