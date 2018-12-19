@@ -164,9 +164,11 @@ class MyProcess implements ProcessInterface
 }
 ```
 
-## DB RedisManager
+## DB manager
 
-DB structure:
+Process manager has ready DB manager realization for working with Redis and has next DB structure:
+
+```
 - DB0
     - {keyPrefix}:{id}:className
     - {keyPrefix}:{id}:processName
@@ -193,4 +195,32 @@ DB structure:
     
     - {keyPrefix}:events:{listener_id}:{block_n}:{trx_n_in_block}
     
+```
+
+Or you can create own DB manager
     
+    
+
+```php
+<?php
+namespace MyApp;
+
+use ProcessManager\db\DBManagerInterface;
+
+class MyDBManager implements DBManagerInterface
+{
+    public function newConnect(){
+        // TODO: Implement newConnect() method.
+    }
+    public function updProcessStateById($id,$fields){
+        // TODO: Implement updProcessStateById() method.
+    }
+    public function getProcessStateById($id,$field = null){
+        // TODO: Implement getProcessStateById() method.
+    }
+    public function addErrorToList($id,string $error){
+        // TODO: Implement addErrorToList() method.
+    }
+   
+}
+```
