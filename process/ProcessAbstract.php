@@ -14,9 +14,9 @@ abstract class ProcessAbstract implements ProcessInterface
     /** @var null|string id in database */
     private $id;
     /** @var array State saved in DB */
-    private $dbState = [];
+    protected $dbState = [];
     /** @var array Current state of the object */
-    private $objState = [];
+    protected $objState = [];
 
     /**
      * ProcessAbstract constructor.
@@ -388,13 +388,14 @@ abstract class ProcessAbstract implements ProcessInterface
     /**
      * get some job data by key
      *
-     * @param string $key
+     * @param string     $key
+     * @param null|mixed $default
      *
-     * @return string|null
+     * @return mixed|null
      */
-    public function getDataByKey(string $key)
+    public function getDataByKey(string $key, $default = null)
     {
-        return isset($this->objState['data'][$key]) ? $this->objState['data'][$key] : null;
+        return isset($this->objState['data'][$key]) ? $this->objState['data'][$key] : $default;
     }
 
     /**
@@ -484,7 +485,7 @@ abstract class ProcessAbstract implements ProcessInterface
             //not results from running process
             || (
                 $this->isRunning()
-                &&  (
+                && (
                     $this->getLastUpdateDatetime() !== null
                     && time() >= (strtotime($this->getLastUpdateDatetime()) + $this->getMaxLifetimeWithoutResults())
                 )
