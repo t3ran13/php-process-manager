@@ -62,7 +62,7 @@ class ProcessManager extends ProcessParent
                 $this->setLastUpdateDatetime(date('Y-m-d H:i:s'))
                     ->setRunningFlag(1)
                     ->saveState();
-                echo PHP_EOL . $this->getLastUpdateDatetime() . ' PROCESS_MANAGER is running';
+//                echo PHP_EOL . $this->getLastUpdateDatetime() . ' PROCESS_MANAGER is running';
 
                 //calculate number of running processes before
                 $nRunningProcesses = 0;
