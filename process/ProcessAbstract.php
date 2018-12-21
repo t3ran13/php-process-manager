@@ -164,7 +164,7 @@ abstract class ProcessAbstract implements ProcessInterface
     }
 
     /**
-     * get id, witch it have in db
+     * have to be dane before interaction with state
      *
      * @return string
      */

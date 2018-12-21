@@ -66,6 +66,13 @@ interface ProcessInterface
     public function getId(): string;
 
     /**
+     * have to be dane before interaction with state
+     *
+     * @return string
+     */
+    public function generateIdFromProcessName();
+
+    /**
      * Human readable process name
      *
      * @return string
