@@ -72,10 +72,14 @@ class RedisManager implements DBManagerInterface
             $set["{$this->keyPrefix}:{$id}:{$key}"] = $val;
         }
 
-        /** @var Status $status */
-        $status = self::$connect->mset($set);
+        $answer = true;
+        if (count($set) > 0) {
+            /** @var Status $status */
+            $status = self::$connect->mset($set);
+            $answer = $status->getPayload() === 'OK';
+        }
 
-        return $status->getPayload() === 'OK';
+        return $answer;
     }
 
     /**
