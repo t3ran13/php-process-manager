@@ -77,9 +77,44 @@ abstract class ProcessAbstract implements ProcessInterface
      */
     public function saveState(): bool
     {
-        $fieldsForUpdate = array_udiff_uassoc(
+        $fieldsForUpdate = $this->getNewFieldsFromArrayCompare(
             $this->objState,
+            $this->dbState
+        );
+
+        $fieldsForDelete = $this->getNewFieldsFromArrayCompare(
             $this->dbState,
+            $this->objState
+        );
+
+        $d = true;
+        if (count($fieldsForDelete) > 0) {
+            $d = $this->getDBManager()->rmvFromProcessStateById($this->id, $fieldsForDelete);
+        }
+
+        $u = true;
+        if (count($fieldsForUpdate) > 0) {
+            $u = $this->getDBManager()->updProcessStateById($this->id, $fieldsForUpdate);
+        }
+
+        if ($u && $d) {
+            $this->dbState = $this->objState;
+        }
+
+        return $u && $d;
+    }
+
+    /**
+     * @param array $new
+     * @param array $old
+     *
+     * @return array
+     */
+    public function getNewFieldsFromArrayCompare($new, $old)
+    {
+        $fields = array_udiff_uassoc(
+            $new,
+            $old,
             function ($a, $b) {
                 return $a === $b ? 0 : 1;
             },
@@ -88,16 +123,13 @@ abstract class ProcessAbstract implements ProcessInterface
             }
         );
 
-        $r = false;
-        if (count($fieldsForUpdate) > 0) {
-            $r = $this->getDBManager()->updProcessStateById($this->id, $fieldsForUpdate);
+        foreach ($fields as $key => $field) {
+            if (is_array($field) && isset($old[$key])) {
+                $fields[$key] = $this->getNewFieldsFromArrayCompare($new[$key], $old[$key]);
+            }
         }
 
-        if ($r) {
-            $this->dbState = $this->objState;
-        }
-
-        return $r;
+        return $fields;
     }
 
     /**
