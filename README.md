@@ -185,17 +185,6 @@ Process manager has ready DB manager realization for working with Redis and has 
     - {keyPrefix}:{id}:data:*
     - {keyPrefix}:{id}:errors:*
     
-    - {keyPrefix}:listeners:{id}:last_update_datetime
-    - {keyPrefix}:listeners:{id}:status
-    - {keyPrefix}:listeners:{id}:mode
-    - {keyPrefix}:listeners:{id}:pid
-    - {keyPrefix}:listeners:{id}:handler
-    - {keyPrefix}:listeners:{id}:data:last_block
-    - {keyPrefix}:listeners:{id}:conditions:{n}:key
-    - {keyPrefix}:listeners:{id}:conditions:{n}:value
-    
-    - {keyPrefix}:events:{listener_id}:{block_n}:{trx_n_in_block}
-    
 ```
 
 Or you can create own DB manager
