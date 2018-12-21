@@ -99,10 +99,13 @@ class RedisManager implements DBManagerInterface
             $set[] = "{$this->keyPrefix}:{$id}:{$key}";
         }
 
-        /** @var Status $status */
-        $status = self::$connect->del($set);
+        $answer = true;
+        if (count($set) > 0) {
+            $deleted = self::$connect->del($set);
+            $answer = $deleted > 0;
+        }
 
-        return $status > 0;
+        return $answer;
     }
 
     public function convertArrayKeysToOneLevel($array)
