@@ -65,22 +65,34 @@ class RedisManager implements DBManagerInterface
      */
     public function updProcessStateById($id, $fields)
     {
-        $set = [];
+        $oneLevelArray = $this->convertArrayKeysToOneLevel($fields);
 
-        foreach ($fields as $key => $val) {
-            if (is_array($val)) {
-                foreach ($val as $key2 => $val2) {
-                    $set["{$this->keyPrefix}:{$id}:{$key}:{$key2}"] = $val2;
-                }
-            } else {
-                $set["{$this->keyPrefix}:{$id}:{$key}"] = $val;
-            }
+        $set = [];
+        foreach ($oneLevelArray as $key => $val) {
+            $set["{$this->keyPrefix}:{$id}:{$key}"] = $val;
         }
 
         /** @var Status $status */
         $status = self::$connect->mset($set);
 
         return $status->getPayload() === 'OK';
+    }
+
+    public function convertArrayKeysToOneLevel($array)
+    {
+        $set = [];
+
+        foreach ($array as $key => $val) {
+            if (is_array($val)) {
+                foreach ($this->convertArrayKeysToOneLevel($val) as $key2 => $val2) {
+                    $set["{$key}:{$key2}"] = $val2;
+                }
+            } else {
+                $set[$key] = $val;
+            }
+        }
+
+        return $set;
     }
 
     /**
