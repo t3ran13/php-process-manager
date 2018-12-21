@@ -78,6 +78,29 @@ class RedisManager implements DBManagerInterface
         return $status->getPayload() === 'OK';
     }
 
+    /**
+     * update process state
+     *
+     * @param int   $id
+     * @param array $fields
+     *
+     * @return bool
+     */
+    public function rmvFromProcessStateById($id, $fields): bool
+    {
+        $oneLevelArray = $this->convertArrayKeysToOneLevel($fields);
+
+        $set = [];
+        foreach ($oneLevelArray as $key => $val) {
+            $set[] = "{$this->keyPrefix}:{$id}:{$key}";
+        }
+
+        /** @var Status $status */
+        $status = self::$connect->del($set);
+
+        return $status > 0;
+    }
+
     public function convertArrayKeysToOneLevel($array)
     {
         $set = [];
@@ -125,7 +148,7 @@ class RedisManager implements DBManagerInterface
     /**
      * insert error to error log list
      *
-     * @param int $id
+     * @param int    $id
      * @param string $error
      *
      * @return void

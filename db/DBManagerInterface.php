@@ -21,6 +21,16 @@ interface DBManagerInterface
     public function updProcessStateById($id, $fields);
 
     /**
+     * update process state
+     *
+     * @param int   $id
+     * @param array $fields
+     *
+     * @return bool
+     */
+    public function rmvFromProcessStateById($id, $fields): bool;
+
+    /**
      * get all process state by id, or some field
      *
      * @param int                 $id
