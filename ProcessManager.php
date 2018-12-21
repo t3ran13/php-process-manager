@@ -82,8 +82,6 @@ class ProcessManager extends ProcessParent
                         break;
                     }
                     try {
-                        echo PHP_EOL . ' process \'' . $process->getProcessName() . '\' start= ' . $process->isStartNeeded();
-                        echo PHP_EOL . ' process \'' . $process->getProcessName() . '\' stop= ' . $process->isStopNeeded();
                         if ($process->isStartNeeded()) {
                             $pid = $this->forkProcess($process);
                             if ($pid > 0) {
