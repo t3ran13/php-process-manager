@@ -33,7 +33,8 @@ if ($pm->hasState()) {
 }
 
 $BEP = (new BlockchainExplorerProcess($db))
-    ->setProcessName('BlockchainExplorerProcess');
+    ->setProcessName('BlockchainExplorerProcess')
+    ->generateIdFromProcessName();//have to be dane before interaction with state
 if ($BEP->hasState()) {
     $BEP->loadState();
 } else {
