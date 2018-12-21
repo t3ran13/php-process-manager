@@ -164,6 +164,18 @@ abstract class ProcessAbstract implements ProcessInterface
     }
 
     /**
+     * get id, witch it have in db
+     *
+     * @return string
+     */
+    public function generateIdFromProcessName()
+    {
+        $this->setId(substr(md5($this->getProcessName()), 0, 9));
+
+        return $this;
+    }
+
+    /**
      * Human readable process name
      *
      * @return string
