@@ -102,6 +102,18 @@ class ProcessManager extends ProcessParent
                     }
                 }
 
+                //catch children signals
+                $pid = 1;
+                while ($pid > 0) {
+                    $pid = pcntl_waitpid(-1, $pidStatus, WNOHANG);
+//                    if ($pid > 0) {
+//                        if (pcntl_wifexited($pidStatus)) {
+//                            $code = pcntl_wexitstatus($pidStatus);
+//                        } else {
+//                        }
+//                    }
+                }
+
                 sleep(1);
                 pcntl_signal_dispatch();
                 $this->loadState();
