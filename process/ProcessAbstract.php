@@ -38,6 +38,7 @@ abstract class ProcessAbstract implements ProcessInterface
         $this->setMaxNTriesOfRun(0);
         $this->setSecondsBetweenRuns(60);
         $this->setMaxLifetimeWithoutResults(60);
+        $this->dbState['lastUpdateDatetime'] = null;
         $this->dbState['data'] = [];
         $this->dbState['errors'] = [];
     }
@@ -52,13 +53,8 @@ abstract class ProcessAbstract implements ProcessInterface
         $params = $this->getDBManager()->getProcessStateById($this->id);
 
         foreach ($params as $fieldName => $val) {
-            if (
-                !in_array($fieldName, ['data', 'errors'], true)
-                || is_array($val)
-            ) {
-                $this->dbState[$fieldName] = $val;
-                $this->objState[$fieldName] = $val;
-            }
+            $this->dbState[$fieldName] = $val;
+            $this->objState[$fieldName] = $val;
         }
 
         return $this;

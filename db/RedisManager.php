@@ -142,11 +142,12 @@ class RedisManager implements DBManagerInterface
                 $values = self::$connect->mGet($keys);
                 foreach ($keys as $n => $keyFull) {
                     $shortKey = str_replace("{$this->keyPrefix}:{$id}:", '', $keyFull);
-                    $data = $this->setArrayElementByKey($data, $shortKey, $values[$n]);
+                    $data = $this->setArrayElementByKey($data, $shortKey, $this->prepareFieldType($shortKey, $values[$n]));
                 }
             }
         } else {
             $data = self::$connect->get("{$this->keyPrefix}:{$id}:" . $field);
+            $data = $this->prepareFieldType($field, $data);
         }
 
         return $data;
@@ -228,5 +229,34 @@ class RedisManager implements DBManagerInterface
         $link = $setVal;
 
         return $array;
+    }
+
+    protected function prepareFieldType ($fieldName, $val)
+    {
+        if (
+            in_array(
+                $fieldName,
+                [
+                    'priority',
+                    'pid',
+                    'executionStep',
+                    'executionStep',
+                    'isRunning',
+                    'nTriesOfRun',
+                    'maxNTriesOfRun',
+                    'secondsBetweenRuns',
+                    'maxLifetimeWithoutResults'
+                ],
+                true
+            )
+        ) {
+            $val = empty($val) ? 0 : (int)$val;
+        } elseif (
+            in_array($fieldName, ['lastUpdateDatetime'], true)
+        ) {
+            $val = empty($val) ? null : $val;
+        }
+
+        return $val;
     }
 }
