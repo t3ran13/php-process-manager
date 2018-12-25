@@ -26,9 +26,20 @@ abstract class ProcessAbstract implements ProcessInterface
     public function __construct(DBManagerInterface $DBManager = null)
     {
         $this->setDBManager($DBManager);
+        //set default values
         $className = get_class($this);
         $this->setId(substr(md5($className), 0, 9));
         $this->setClassName(basename(str_replace('\\', '/', $className)));
+        $this->setProcessName($this->getClassName());
+        $this->setPriority(0);
+        $this->setExecutionStep(0);
+        $this->setRunningFlag(0);
+        $this->setNTriesOfRun(0);
+        $this->setMaxNTriesOfRun(0);
+        $this->setSecondsBetweenRuns(60);
+        $this->setMaxLifetimeWithoutResults(60);
+        $this->dbState['data'] = [];
+        $this->dbState['errors'] = [];
     }
 
     /**
@@ -40,22 +51,15 @@ abstract class ProcessAbstract implements ProcessInterface
     {
         $params = $this->getDBManager()->getProcessStateById($this->id);
 
-        $this->dbState['className'] = empty($params['className']) ? null : $params['className'];
-        $this->dbState['processName'] = empty($params['processName']) ? null : $params['processName'];
-        $this->dbState['priority'] = empty($params['priority']) ? 0 : (integer)$params['priority'];
-        $this->dbState['pid'] = empty($params['pid']) ? 0 : (integer)$params['pid'];
-        $this->dbState['executionStep'] = empty($params['executionStep']) ? 0 : (integer)$params['executionStep'];
-        $this->dbState['isRunning'] = empty($params['isRunning']) ? 0 : (integer)$params['isRunning'];
-        $this->dbState['nTriesOfRun'] = empty($params['nTriesOfRun']) ? 0 : (integer)$params['nTriesOfRun'];
-        $this->dbState['maxNTriesOfRun'] = empty($params['maxNTriesOfRun']) ? 0 : (integer)$params['maxNTriesOfRun'];
-        $this->dbState['secondsBetweenRuns'] = empty($params['secondsBetweenRuns']) ? 0 : (integer)$params['secondsBetweenRuns'];
-        $this->dbState['maxLifetimeWithoutResults'] = empty($params['maxLifetimeWithoutResults'])
-            ? 0 : (integer)$params['maxLifetimeWithoutResults'];
-        $this->dbState['lastUpdateDatetime'] = empty($params['lastUpdateDatetime']) ? null : $params['lastUpdateDatetime'];
-        $this->dbState['data'] = empty($params['data']) || !is_array($params['data']) ? [] : $params['data'];
-        $this->dbState['errors'] = empty($params['errors']) || !is_array($params['errors']) ? [] : $params['errors'];
-
-        $this->objState = $this->dbState;
+        foreach ($params as $fieldName => $val) {
+            if (
+                !in_array($fieldName, ['data', 'errors'], true)
+                || is_array($val)
+            ) {
+                $this->dbState[$fieldName] = $val;
+                $this->objState[$fieldName] = $val;
+            }
+        }
 
         return $this;
     }
@@ -180,7 +184,7 @@ abstract class ProcessAbstract implements ProcessInterface
      */
     public function setId(string $id)
     {
-        $this->id = $id;
+        $this->objState['id'] = $id;
 
         return $this;
     }
@@ -192,7 +196,7 @@ abstract class ProcessAbstract implements ProcessInterface
      */
     public function getId(): string
     {
-        return $this->id;
+        return $this->objState['id'];
     }
 
     /**
@@ -410,7 +414,7 @@ abstract class ProcessAbstract implements ProcessInterface
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getLastUpdateDatetime()
     {

@@ -209,7 +209,7 @@ interface ProcessInterface
     public function setMaxLifetimeWithoutResults(int $seconds);
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getLastUpdateDatetime();
 
