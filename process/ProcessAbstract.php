@@ -38,9 +38,9 @@ abstract class ProcessAbstract implements ProcessInterface
         $this->setMaxNTriesOfRun(0);
         $this->setSecondsBetweenRuns(60);
         $this->setMaxLifetimeWithoutResults(60);
-        $this->dbState['lastUpdateDatetime'] = null;
-        $this->dbState['data'] = [];
-        $this->dbState['errors'] = [];
+        $this->objState['lastUpdateDatetime'] = null;
+        $this->objState['data'] = [];
+        $this->objState['errors'] = [];
     }
 
     /**
