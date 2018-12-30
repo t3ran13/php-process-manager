@@ -50,7 +50,7 @@ abstract class ProcessAbstract implements ProcessInterface
      */
     public function loadState()
     {
-        $params = $this->getDBManager()->getProcessStateById($this->id);
+        $params = $this->getDBManager()->getProcessStateById($this->getId());
 
         foreach ($params as $fieldName => $val) {
             $this->dbState[$fieldName] = $val;
@@ -67,7 +67,7 @@ abstract class ProcessAbstract implements ProcessInterface
      */
     public function hasState(): bool
     {
-        return !empty($this->getDBManager()->getProcessStateById($this->id, 'id'));
+        return !empty($this->getDBManager()->getProcessStateById($this->getId(), 'id'));
     }
 
     /**
@@ -89,12 +89,12 @@ abstract class ProcessAbstract implements ProcessInterface
 
         $d = true;
         if (count($fieldsForDelete) > 0) {
-            $d = $this->getDBManager()->rmvFromProcessStateById($this->id, $fieldsForDelete);
+            $d = $this->getDBManager()->rmvFromProcessStateById($this->getId(), $fieldsForDelete);
         }
 
         $u = true;
         if (count($fieldsForUpdate) > 0) {
-            $u = $this->getDBManager()->updProcessStateById($this->id, $fieldsForUpdate);
+            $u = $this->getDBManager()->updProcessStateById($this->getId(), $fieldsForUpdate);
         }
 
         if ($u && $d) {
