@@ -52,9 +52,20 @@ abstract class ProcessAbstract implements ProcessInterface
     {
         $params = $this->getDBManager()->getProcessStateById($this->getId());
 
+        //update fields
         foreach ($params as $fieldName => $val) {
             $this->dbState[$fieldName] = $val;
             $this->objState[$fieldName] = $val;
+        }
+
+        //delete fields
+        $fieldsForDelete = $this->getNewFieldsFromArrayCompare(
+            $this->dbState,
+            $this->objState
+        );
+        foreach ($fieldsForDelete as $fieldName => $val) {
+            uset($this->dbState[$fieldName]);
+            uset($this->objState[$fieldName]);
         }
 
         return $this;
