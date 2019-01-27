@@ -89,9 +89,11 @@ class ProcessManager extends ProcessParent
                             }
 
                         } elseif ($process->isStopNeeded()) {
-                            posix_kill($process->getPid(), SIGTERM);
-                            $process->setRunningFlag(0)
-                                ->saveState();
+                            $s = posix_kill($process->getPid(), SIGTERM);
+                            if (!$s) {
+                                $process->setRunningFlag(0)
+                                    ->saveState();
+                            }
                         }
                     } catch (\Throwable $e) {
                         $msg = '"' . $e->getMessage() . '" ' . PHP_EOL . $e->getTraceAsString();
